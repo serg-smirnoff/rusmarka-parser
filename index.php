@@ -1,34 +1,32 @@
 <?php
 
-@set LESSCHARSET=utf-8
-
 include('simple_html_dom.php');
 
-// пример запуска ( спарсит все марки с сайта rusmarka.ru, страницу 1, года 2017, в раздел с id 1885 )
+// РїСЂРёРјРµСЂ Р·Р°РїСѓСЃРєР° ( СЃРїР°СЂСЃРёС‚ РІСЃРµ РјР°СЂРєРё СЃ СЃР°Р№С‚Р° rusmarka.ru, СЃС‚СЂР°РЅРёС†Сѓ 1, РіРѕРґР° 2017, РІ СЂР°Р·РґРµР» СЃ id 1885 )
 // parser.html?year=2017&page=1&parent=1885&PageSpeed=off
 // https://www.stamp-collection.ru/parser.html?year=2017&page=1&parent=1885&PageSpeed=off
 
 // page = 0,1,2,3,4...
 // year = 2017,2018...
-// parent = 1885 (номер документа в дереве для соотв. года)
+// parent = 1885 (РЅРѕРјРµСЂ РґРѕРєСѓРјРµРЅС‚Р° РІ РґРµСЂРµРІРµ РґР»СЏ СЃРѕРѕС‚РІ. РіРѕРґР°)
 
-// год который парсим с сайта rusmarka.ru
+// РіРѕРґ РєРѕС‚РѕСЂС‹Р№ РїР°СЂСЃРёРј СЃ СЃР°Р№С‚Р° rusmarka.ru
 $year = $_GET["year"]; 
 
-// страница сайта rusmarka.ru
+// СЃС‚СЂР°РЅРёС†Р° СЃР°Р№С‚Р° rusmarka.ru
 $p = $_GET["page"];
 
-// id родителя в дереве документов на сайте stamp-collection.ru
+// id СЂРѕРґРёС‚РµР»СЏ РІ РґРµСЂРµРІРµ РґРѕРєСѓРјРµРЅС‚РѕРІ РЅР° СЃР°Р№С‚Рµ stamp-collection.ru
 $parentID = $_GET["parent"];
 
-// стартовый url
+// СЃС‚Р°СЂС‚РѕРІС‹Р№ url
 if ($p == 0){
     $startUrl = "http://rusmarka.ru/catalog/marka/year/".$year.".aspx";
 } else {
     $startUrl = "http://rusmarka.ru/catalog/marka/year/".$year."/p/".$p.".aspx";
 }
 
-// получаем страницу
+// РїРѕР»СѓС‡Р°РµРј СЃС‚СЂР°РЅРёС†Сѓ
 $contentPage = '';
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -42,25 +40,25 @@ curl_close($ch);
 $html = new simple_html_dom();
 $html->load($contentPage);
 
-// выбираем контент внутри основной таблицы
+// РІС‹Р±РёСЂР°РµРј РєРѕРЅС‚РµРЅС‚ РІРЅСѓС‚СЂРё РѕСЃРЅРѕРІРЅРѕР№ С‚Р°Р±Р»РёС†С‹
 $tableCatalog = $html->find('table.catalog');
 $tableCatalog[0];
 
-// парсим контент для tv параметров
+// РїР°СЂСЃРёРј РєРѕРЅС‚РµРЅС‚ РґР»В¤ tv РїР°СЂР°РјРµС‚СЂРѕРІ
 $num = $tableCatalog[0]->find('p.num');
 $href = $tableCatalog[0]->find('div[style="PADDING-RIGHT: 10px; PADDING-LEFT: 125px; PADDING-BOTTOM: 10px; PADDING-TOP: 10px"] p a');
 
 for ($i=0; $i<20; $i++){
     
     $res[$i]['num'] = $num[$i]->innertext;
-    $res[$i]['alias'] = str_replace("№ ", "", $res[$i]['num']);
+    $res[$i]['alias'] = str_replace("С” ", "", $res[$i]['num']);
     
     $res[$i]['title'] = $res[$i]['num'].'. '.$href[$i]->innertext;
     
-    // ссылка на внутреннюю страницу
+    // СЃСЃС‹Р»РєР° РЅР° РІРЅСѓС‚СЂРµРЅРЅСЋСЋ СЃС‚СЂР°РЅРёС†Сѓ
     $res[$i]['href'] = $href[$i]->href;
 
-        // получаем внутреннюю страницу и параметры позиции такие как тираж, размер, описание, цена
+        // РїРѕР»СѓС‡Р°РµРј РІРЅСѓС‚СЂРµРЅРЅСЋСЋ СЃС‚СЂР°РЅРёС†Сѓ Рё РїР°СЂР°РјРµС‚СЂС‹ РїРѕР·РёС†РёРё С‚Р°РєРёРµ РєР°Рє С‚РёСЂР°Р¶, СЂР°Р·РјРµСЂ, РѕРїРёСЃР°РЅРёРµ, С†РµРЅР°
         $contentPageInner = '';
         $ch2 = curl_init();
         curl_setopt($ch2, CURLOPT_HEADER, 0);
@@ -75,40 +73,40 @@ for ($i=0; $i<20; $i++){
         $htmlInner->load($contentPageInner);
         $htmlInnerItem = $htmlInner->find('div.text');
         
-        // картинка. получаем абсолютный uri + выкачиваем графику + сохраняем в папку соответствующего года
+        // РєР°СЂС‚РёРЅРєР°. РїРѕР»СѓС‡Р°РµРј Р°Р±СЃРѕР»СЋС‚РЅС‹Р№ uri + РІС‹РєР°С‡РёРІР°РµРј РіСЂР°С„РёРєСѓ + СЃРѕС…СЂР°РЅВ¤РµРј РІ РїР°РїРєСѓ СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РµРіРѕ РіРѕРґР°
         $res[$i]['src'] = $htmlInnerItem[0]->find('#ctl00_MainColumn_ctl00_gooddetail_repParts_ctl00_part_linkImage')[0]->href;
-        // цена 
+        // С†РµРЅР° 
         preg_match_all('!\d+!', $htmlInnerItem[0]->find('div.cart1 p')[0], $matches);
         $res[$i]['price'] = ceil($matches[0][0] * 1.6);
-        // описание
+        // РѕРїРёСЃР°РЅРёРµ
         $res[$i]['description'] = $htmlInnerItem[0]->find('div.fullinfo p#ctl00_MainColumn_ctl00_gooddetail_repParts_ctl00_part_description')[0]->plaintext;
-        // тип перфорации
+        // С‚РёРї РїРµСЂС„РѕСЂР°С†РёРё
         $res[$i]['perforation'] = $htmlInnerItem[0]->find("#ctl00_MainColumn_ctl00_gooddetail_repParts_ctl00_part_infoTable > tbody > tr > td")[3]->plaintext;
-        // формат
+        // С„РѕСЂРјР°С‚
         $res[$i]['format'] = $htmlInnerItem[0]->find("#ctl00_MainColumn_ctl00_gooddetail_repParts_ctl00_part_infoTable > tbody > tr > td")[4]->plaintext;
-        // тираж
+        // С‚РёСЂР°Р¶
         $res[$i]['tirazh'] = $htmlInnerItem[0]->find("#ctl00_MainColumn_ctl00_gooddetail_repParts_ctl00_part_infoTable > tbody > tr > td")[5]->plaintext;
 
     $url = "http://rusmarka.ru".$res[$i]['src']; 
     $res[$i]['bigPicture'] = "assets/stamps_scany/".$year."/".$res[$i]['alias'].".jpg";
     copy($url, '/var/www/stampcollection/data/www/stamp-collection.ru/'.$res[$i]['bigPicture']);
 
-    // создаем новый ресурс с заданными параметрами
+    // СЃРѕР·РґР°РµРј РЅРѕРІС‹Р№ СЂРµСЃСѓСЂСЃ СЃ Р·Р°РґР°РЅРЅС‹РјРё РїР°СЂР°РјРµС‚СЂР°РјРё
     $resource = $modx->newObject('modResource');
 
-    // пишем значения документа
-    $resource->set('template', 7);                      // Назначаем ему нужный шаблон
-    $resource->set('isfolder', 0);                      // Указываем, что это не контейнер   
-    $resource->set('published', 1);                     // Опубликован
-    $resource->set('createdon', time());                // Время создания
-    $resource->set('pagetitle', $res[$i]['title']);     // Заголовок
-    $resource->set('alias', $res[$i]['alias']);         // Псевдоним
-    $resource->setContent($message);                    // Содержимое
-    $resource->set('parent', $parentID);                // Родительский ресурс
-    $resource->save();                                  // Сохраняем
+    // РїРёС€РµРј Р·РЅР°С‡РµРЅРёСЏ РґРѕРєСѓРјРµРЅС‚Р°
+    $resource->set('template', 7);                      // РЊР°Р·РЅР°С‡Р°РµРј РµРјСѓ РЅСѓР¶РЅС‹Р№ С€Р°Р±Р»РѕРЅ
+    $resource->set('isfolder', 0);                      // вЂќРєР°Р·С‹РІР°РµРј, С‡С‚Рѕ СЌС‚Рѕ РЅРµ РєРѕРЅС‚РµР№РЅРµСЂ   
+    $resource->set('published', 1);                     // СњРїСѓР±Р»РёРєРѕРІР°РЅ
+    $resource->set('createdon', time());                // В¬СЂРµРјВ¤ СЃРѕР·РґР°РЅРёВ¤
+    $resource->set('pagetitle', $res[$i]['title']);     // В«Р°РіРѕР»РѕРІРѕРє
+    $resource->set('alias', $res[$i]['alias']);         // С•СЃРµРІРґРѕРЅРёРј
+    $resource->setContent($message);                    // вЂ”РѕРґРµСЂР¶РёРјРѕРµ
+    $resource->set('parent', $parentID);                // вЂ“РѕРґРёС‚РµР»СЊСЃРєРёР№ СЂРµСЃСѓСЂСЃ
+    $resource->save();                                  // вЂ”РѕС…СЂР°РЅВ¤РµРј
     
     
-    // пишем значения tv в уже созданный документ
+    // РїРёС€РµРј Р·РЅР°С‡РµРЅРёСЏ tv РІ СѓР¶Рµ СЃРѕР·РґР°РЅРЅС‹Р№ РґРѕРєСѓРјРµРЅС‚
     $newdoc = $modx->getObject('modDocument', array('pagetitle' => $res[$i]['title']));
     $id = $newdoc->get('id');
 
@@ -129,7 +127,7 @@ for ($i=0; $i<20; $i++){
     $tv->save();
 
     $tv = $modx->getObject('modTemplateVar',array('name'=>'inventory'));
-    $tv->setValue($id,"есть в наличии");
+    $tv->setValue($id,"РµСЃС‚СЊ РІ РЅР°Р»РёС‡РёРё");
     $tv->save();
 
     $tv = $modx->getObject('modTemplateVar',array('name'=>'param4'));
@@ -145,7 +143,7 @@ for ($i=0; $i<20; $i++){
     $tv->save();
     
     
-    // Отладка 
+    // РћС‚Р»Р°РґРєР° 
     /*
 	echo 'num = '.$res[$i]['num'].'<br />';
     echo 'alias = '.$res[$i]['alias'].'<br />';
