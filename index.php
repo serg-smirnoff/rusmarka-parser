@@ -1,5 +1,7 @@
 <?php
 
+@set LESSCHARSET=utf-8
+
 include('simple_html_dom.php');
 
 // пример запуска ( спарсит все марки с сайта rusmarka.ru, страницу 1, года 2017, в раздел с id 1885 )
