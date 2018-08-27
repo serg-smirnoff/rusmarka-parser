@@ -15,7 +15,7 @@ $year = htmlspecialchars(stripslashes($_GET["year"]));
 // страница сайта rusmarka.ru
 $p = htmlspecialchars(stripslashes($_GET["page"]));
 
-// id родителя в дереве документов на сайте stamp-collection.ru
+// id родителя в дереве документов на сайте sitename.tld
 $parentID = htmlspecialchars(stripslashes($_GET["parent"]));
 
 // стартовый url
@@ -87,8 +87,8 @@ for ($i=0; $i<20; $i++){
         $res[$i]['tirazh'] = $htmlInnerItem[0]->find("#ctl00_MainColumn_ctl00_gooddetail_repParts_ctl00_part_infoTable > tbody > tr > td")[5]->plaintext;
 
     $url = "http://rusmarka.ru".$res[$i]['src']; 
-    $res[$i]['bigPicture'] = "assets/stamps_scany/".$year."/".$res[$i]['alias'].".jpg";
-    copy($url, '/var/www/stampcollection/data/www/stamp-collection.ru/'.$res[$i]['bigPicture']);
+    $res[$i]['bigPicture'] = "assets/items/".$year."/".$res[$i]['alias'].".jpg";
+    copy($url, '/var/www/sitename/data/www/sitename.tld/'.$res[$i]['bigPicture']);
 
     // создаем новый ресурс с заданными параметрами
     $resource = $modx->newObject('modResource');
