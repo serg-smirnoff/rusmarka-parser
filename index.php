@@ -44,7 +44,7 @@ $html->load($contentPage);
 $tableCatalog = $html->find('table.catalog');
 $tableCatalog[0];
 
-// парсим контент дл¤ tv параметров
+// парсим контент для tv параметров
 $num = $tableCatalog[0]->find('p.num');
 $href = $tableCatalog[0]->find('div[style="PADDING-RIGHT: 10px; PADDING-LEFT: 125px; PADDING-BOTTOM: 10px; PADDING-TOP: 10px"] p a');
 
@@ -73,7 +73,7 @@ for ($i=0; $i<20; $i++){
         $htmlInner->load($contentPageInner);
         $htmlInnerItem = $htmlInner->find('div.text');
         
-        // картинка. получаем абсолютный uri + выкачиваем графику + сохран¤ем в папку соответствующего года
+        // картинка. получаем абсолютный uri + выкачиваем графику + сохраняем в папку соответствующего года
         $res[$i]['src'] = $htmlInnerItem[0]->find('#ctl00_MainColumn_ctl00_gooddetail_repParts_ctl00_part_linkImage')[0]->href;
         // цена 
         preg_match_all('!\d+!', $htmlInnerItem[0]->find('div.cart1 p')[0], $matches);
@@ -95,15 +95,15 @@ for ($i=0; $i<20; $i++){
     $resource = $modx->newObject('modResource');
 
     // пишем значения документа
-    $resource->set('template', 7);                      // Ќазначаем ему нужный шаблон
-    $resource->set('isfolder', 0);                      // ”казываем, что это не контейнер   
-    $resource->set('published', 1);                     // ќпубликован
-    $resource->set('createdon', time());                // ¬рем¤ создани¤
-    $resource->set('pagetitle', $res[$i]['title']);     // «аголовок
-    $resource->set('alias', $res[$i]['alias']);         // ѕсевдоним
-    $resource->setContent($message);                    // —одержимое
-    $resource->set('parent', $parentID);                // –одительский ресурс
-    $resource->save();                                  // —охран¤ем
+    $resource->set('template', 7);                      // назначаем шаблон
+    $resource->set('isfolder', 0);                      // указываем, что это не контейнер   
+    $resource->set('published', 1);                     // опубликован
+    $resource->set('createdon', time());                // время создания
+    $resource->set('pagetitle', $res[$i]['title']);     // заголовок
+    $resource->set('alias', $res[$i]['alias']);         // псевдоним
+    $resource->setContent($message);                    // содержимое
+    $resource->set('parent', $parentID);                // родительский ресурс
+    $resource->save();                                  // сохраняем
     
     
     // пишем значения tv в уже созданный документ
