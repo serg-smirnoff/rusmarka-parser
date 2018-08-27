@@ -10,13 +10,13 @@ include('simple_html_dom.php');
 // parent = 1885 (номер документа в дереве для соотв. года)
 
 // год который парсим с сайта rusmarka.ru
-$year = $_GET["year"]; 
+$year = htmlspecialchars(stripslashes($_GET["year"]));
 
 // страница сайта rusmarka.ru
-$p = $_GET["page"];
+$p = htmlspecialchars(stripslashes($_GET["page"]));
 
 // id родителя в дереве документов на сайте stamp-collection.ru
-$parentID = $_GET["parent"];
+$parentID = htmlspecialchars(stripslashes($_GET["parent"]));
 
 // стартовый url
 if ($p == 0){
